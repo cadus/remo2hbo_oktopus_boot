@@ -1,0 +1,5 @@
+label: dos
+unit: sectors
+
+: start=8192, size=114688, type=1, type=c
+: start=122880, type=83

@@ -1,0 +1,10 @@
+# Name this file config.mk to override options from the main Makefile
+
+define SOURCES = 
+deb     http://raspbian.raspberrypi.org/raspbian stretch main non-free firmware rpi\n\
+deb     http://archive.raspberrypi.org/debian stretch main\n
+endef
+
+BOOTSTRAP := http://raspbian.raspberrypi.org/raspbian
+
+# PACKAGES := ${PACKAGES} foo bar ... additional packages

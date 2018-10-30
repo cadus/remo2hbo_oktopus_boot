@@ -1,3 +1,4 @@
 .*.swp
 raspi_root/
 raspi.img
+config.mk
