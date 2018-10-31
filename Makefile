@@ -46,6 +46,7 @@ id_rsa.pub:
 
 files/etc/network/interfaces.d/wifi: wifi.tmpl
 	sed 's;#WIFI-SSID#;${WIFI-SSID};; s;#WIFI-PASS#;${WIFI-PASS};;' <'$<' >'$@'
+	chmod 644 '$@'
 
 files/root/.ssh/authorized_keys: id_rsa.pub
 	mkdir -p files/root/.ssh/
