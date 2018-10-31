@@ -7,7 +7,7 @@ deb	http://raspbian.raspberrypi.org/raspbian stretch main non-free firmware rpi\
 deb	http://archive.raspberrypi.org/debian stretch main\n
 endef
 
-PACKAGES := apt apt-transport-https bluez bluez-firmware btrfs-tools busybox-static bzip2 ca-certificates cron deborphan firmware-atheros firmware-brcm80211 firmware-libertas firmware-linux-free firmware-misc-nonfree firmware-realtek gzip htop ifupdown init iptables iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openssh-client openssh-server p7zip-full raspberrypi-bootloader raspberrypi-kernel rpi-update rsync ssh sshfs sudo systemd traceroute unace unrar-free unzip vim wget wireless-tools wpasupplicant xz-utils zip
+PACKAGES := apt apt-transport-https bluez bluez-firmware btrfs-tools busybox-static bzip2 ca-certificates cron deborphan firmware-atheros firmware-brcm80211 firmware-libertas firmware-linux-free firmware-misc-nonfree firmware-realtek gzip htop ifupdown init iptables iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openssh-client openssh-server p7zip-full raspberrypi-bootloader raspberrypi-kernel rsync ssh sshfs sudo systemd traceroute unace unrar-free unzip vim wget wireless-tools wpasupplicant xz-utils zip
 
 include config.mk
 
@@ -47,14 +47,14 @@ raspi.img: raspi_root/ partitions
 	start=$$(sfdisk --dump "$$image" |sed -rn 's;^.*start= *([0-9]+),.*type=83;\1;p'); \
 	size=$$(sfdisk --dump "$$image" |sed -rn 's;^.*size= *([0-9]+),.*type=83;\1;p'); \
 	losetup -o $$((start * 512)) --sizelimit $$((size * 512)) "$${lo}" "$$image" && \
-	mkfs.ext4 "$$lo" && mount -t ext4 "$$lo" "$@.mnt/";
+	mkfs.ext4 -F "$$lo" && mount -t ext4 "$$lo" "$@.mnt/";
 	mkdir "$@.mnt/boot"
 	lo=$$(losetup -f); image='$@'; \
 	start=$$(sfdisk --dump "$$image" |sed -rn 's;^.*start= *([0-9]+),.*type=c;\1;p'); \
 	size=$$(sfdisk --dump "$$image" |sed -rn 's;^.*size= *([0-9]+),.*type=c;\1;p'); \
 	losetup -o $$((start * 512)) --sizelimit $$((size * 512)) "$${lo}" "$$image" && \
-	mkfs.vfat "$$lo" && mount -t vfat "$$lo" "$@.mnt/boot";
-	cp -a "$<" "$@.mnt/"
+	mkfs.fat -F 32 -n boot "$$lo" && mount -t vfat "$$lo" "$@.mnt/boot";
+	cp -a "$<." "$@.mnt/"
 	umount "$@.mnt/boot/" "$@.mnt/"
 	losetup -a |sed -rn '/$@/{s;^([^:]+):.*$$;\1;p;q}' |xargs losetup -d
 	losetup -a |sed -rn '/$@/{s;^([^:]+):.*$$;\1;p;q}' |xargs losetup -d
