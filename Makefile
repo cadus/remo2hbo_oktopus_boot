@@ -9,6 +9,10 @@ endef
 
 PACKAGES := apt apt-transport-https bluez bluez-firmware btrfs-tools busybox-static bzip2 ca-certificates cron deborphan firmware-atheros firmware-brcm80211 firmware-libertas firmware-linux-free firmware-misc-nonfree firmware-realtek gzip htop ifupdown init iptables iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openssh-client openssh-server p7zip-full raspberrypi-bootloader raspberrypi-kernel rsync ssh sshfs sudo systemd traceroute unace unrar-free unzip vim wget wireless-tools wpasupplicant xz-utils zip
 
+# Do not change, only override in config.mk
+WIFI-SSID = 
+WIFI-PASS = 
+
 include config.mk
 
 config.mk: config.example
@@ -27,7 +31,6 @@ raspi_root/: raspi_root .FORCE
 	printf '${SOURCES}' >$@/etc/apt/sources.list
 	-chroot "$@" apt-key add - <./raspberrypi-archive-keyring.gpg
 	-cp /etc/resolv.conf "$@etc/"
-	cp -u cmdline.txt config.txt "$@boot/"
 	-chroot "$@" sh -c 'apt-mark showmanual |xargs apt-mark auto'
 	-chroot "$@" apt-get update
 	chroot "$@" ln -sf /bin/true /usr/local/sbin/invoke-rc.d
@@ -38,7 +41,19 @@ raspi_root/: raspi_root .FORCE
 	chroot "$@" apt-get clean
 	touch "$@"
 
-raspi.img: raspi_root/ partitions
+id_rsa.pub:
+	ssh-keygen -b 2048 -t rsa -N '' -f id_rsa
+
+files/etc/network/interfaces.d/wifi: wifi.tmpl
+	sed 's;#WIFI-SSID#;${WIFI-SSID};; s;#WIFI-PASS#;${WIFI-PASS};;' <'$<' >'$@'
+
+files/root/.ssh/authorized_keys: id_rsa.pub
+	mkdir -p files/root/.ssh/
+	cat '$<' >>'$@'
+	chmod 700 files/root/ files/root/.ssh/
+	chmod 600 '$@'
+
+raspi.img: raspi_root/ files/ partitions files/root/.ssh/authorized_keys files/etc/network/interfaces.d/wifi
 	-rmdir "$@.mnt"
 	mkdir "$@.mnt"  # fail receipe if dir is nonempty
 	dd bs=1M count=0 seek=1024 of="$@"  # set up sparse file
@@ -54,7 +69,7 @@ raspi.img: raspi_root/ partitions
 	size=$$(sfdisk --dump "$$image" |sed -rn 's;^.*size= *([0-9]+),.*type=c;\1;p'); \
 	losetup -o $$((start * 512)) --sizelimit $$((size * 512)) "$${lo}" "$$image" && \
 	mkfs.fat -F 32 -n boot "$$lo" && mount -t vfat "$$lo" "$@.mnt/boot";
-	cp -a "$<." "$@.mnt/"
+	cp -a "raspi_root/." "files/." "$@.mnt/"
 	umount "$@.mnt/boot/" "$@.mnt/"
 	losetup -a |sed -rn '/$@/{s;^([^:]+):.*$$;\1;p;q}' |xargs losetup -d
 	losetup -a |sed -rn '/$@/{s;^([^:]+):.*$$;\1;p;q}' |xargs losetup -d

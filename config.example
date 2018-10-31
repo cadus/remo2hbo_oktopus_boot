@@ -8,3 +8,6 @@ endef
 BOOTSTRAP := http://raspbian.raspberrypi.org/raspbian
 
 # PACKAGES := ${PACKAGES} foo bar ... additional packages
+
+# WIFI-SSID = 
+# WIFI-PASS =

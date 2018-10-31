@@ -2,3 +2,7 @@
 raspi_root/
 raspi.img
 config.mk
+files/root/.ssh/authorized_keys
+files/etc/network/interfaces/wifi
+id_rsa
+id_rsa.pub
