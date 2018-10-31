@@ -27,6 +27,7 @@ raspi_root/: raspi_root .FORCE
 	printf '${SOURCES}' >$@/etc/apt/sources.list
 	-chroot "$@" apt-key add - <./raspberrypi-archive-keyring.gpg
 	-cp /etc/resolv.conf "$@etc/"
+	cp -u cmdline.txt config.txt "$@boot/"
 	-chroot "$@" sh -c 'apt-mark showmanual |xargs apt-mark auto'
 	-chroot "$@" apt-get update
 	chroot "$@" ln -sf /bin/true /usr/local/sbin/invoke-rc.d
