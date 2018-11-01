@@ -37,7 +37,7 @@ raspi_root/: raspi_root .FORCE
 	chroot "$@" apt-get --yes install ${PACKAGES}
 	chroot "$@" apt-get --yes --auto-remove purge
 	chroot "$@" apt-get --yes --auto-remove upgrade
-	chroot "$@" rpi-update
+	chroot "$@" rpi-update || [ -f "$@/boot/bootcode.bin" ]
 	sync
 	chroot "$@" apt-get clean
 	chroot "$@" rm /usr/local/sbin/invoke-rc.d
