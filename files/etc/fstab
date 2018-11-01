@@ -1,2 +1,2 @@
 /dev/mmcblk0p2	/	ext4	auto,nofail,rw	0 0
-/dev/mmcblk0p1	/	vfat	auto,nofail,rw	0 0
+/dev/mmcblk0p1	/boot	vfat	auto,nofail,rw	0 0
