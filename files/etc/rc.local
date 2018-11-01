@@ -4,3 +4,11 @@ bt-network -s nap br0 &
 hciconfig hci0 up
 hciconfig hci0 sspmode 1
 hciconfig hci0 piscan
+
+while sleep 5; do
+  bt-device -l \
+  | grep -oE '[0-9A-F:]{17}' \
+  | while read mac; do
+    bt-device --set "$mac" Trusted 1
+  done
+done &
