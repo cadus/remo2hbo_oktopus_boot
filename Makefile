@@ -7,7 +7,7 @@ deb	http://raspbian.raspberrypi.org/raspbian stretch main non-free firmware rpi\
 deb	http://archive.raspberrypi.org/debian stretch main\n
 endef
 
-PACKAGES := apt apt-transport-https bluez bluez-firmware bluez-tools bridge-utils btrfs-tools busybox-static bzip2 ca-certificates cron deborphan dnsmasq firmware-atheros firmware-brcm80211 firmware-libertas firmware-linux-free firmware-misc-nonfree firmware-realtek gzip htop ifupdown init iptables iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openssh-client openssh-server p7zip-full pi-bluetooth rpi-update rsync ssh sshfs sudo systemd traceroute unace unrar-free unzip vim wget wireless-tools wpasupplicant xz-utils zip
+PACKAGES := apt apt-transport-https bluez bluez-firmware bluez-tools bridge-utils btrfs-tools busybox-static bzip2 ca-certificates cron deborphan dnsmasq firmware-atheros firmware-brcm80211 firmware-libertas firmware-linux-free firmware-misc-nonfree firmware-realtek gzip htop ifupdown init iptables iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openbsd-inetd openssh-client openssh-server p7zip-full pi-bluetooth rpi-update rsync ssh sshfs sudo systemd traceroute unace unrar-free unzip vim wget wireless-tools wpasupplicant xz-utils zip
 
 # Do not change, only override in config.mk
 WIFI-SSID = 
