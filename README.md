@@ -42,8 +42,7 @@ If you do not provide your own SSH key, the build script will conveniently gener
     ssh -i id_rsa root@oktopus
 
 ## ToDo
- * set up bluetooth
- * set up DHCP/DNS (dnsmasq)
- * possibly set up a redirect rule via `iptables` (may not be necessary)
- * provide the display application via web server
  * include the sensor driver and utilities
+ * include the display application
+ * provide the display application via web server (mockup server so far)
+ * possibly counter DNS rebind protection by identifying as gateway and redirect via `iptables` (may not be necessary)

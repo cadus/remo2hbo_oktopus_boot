@@ -11,7 +11,7 @@ iHTTP/1.1 200 OK\r\
 Content-Type: text/html; encoding=utf-8\r\
 Connection: close\r\
 \r\
-<HTML><HEAD><TITLE>Oktopus</TITLE></HEAD><BODY><H1>Oktopus</H1>Oktopus</BODY></HTML>
+<HTML><HEAD><TITLE>Oktopus</TITLE></HEAD><BODY><H1>Oktopus</H1>The machine that goes "bing".</BODY></HTML>
 p
 q
 }
