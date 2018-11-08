@@ -46,3 +46,6 @@ If you do not provide your own SSH key, the build script will conveniently gener
  * include the display application
  * provide the display application via web server (mockup server so far)
  * possibly counter DNS rebind protection by identifying as gateway and redirect via `iptables` (may not be necessary)
+
+## Legal
+This program was originally developed on behalf of the Hochschule für Technik und Wirtschaft Berlin. The program is licensed under the GNU Affero General Public License. See LICENSE.TXT for details.
