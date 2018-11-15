@@ -9,7 +9,7 @@ while read name value; do
   [ ! "${name%$CR}" ] && break
 done
 
-printf 'HTTP 200 OK\r\n'
+printf 'HTTP/1.1 200 OK\r\n'
 printf '%s: %s\r\n' \
   Connection close \
   Content-Type text/plain
