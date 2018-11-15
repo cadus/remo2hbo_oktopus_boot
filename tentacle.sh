@@ -2,4 +2,4 @@
 
 field="$1"
 
-nc localhost 8200 |cut -d\\  -f${field}
+ncat localhost 8200 |cut -d\\  -f${field}
