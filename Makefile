@@ -24,7 +24,7 @@ deb	http://raspbian.raspberrypi.org/raspbian stretch main non-free firmware rpi\
 deb	http://archive.raspberrypi.org/debian stretch main\n
 endef
 
-PACKAGES := apt apt-transport-https bluez bluez-firmware bluez-tools bridge-utils btrfs-tools busybox-static bzip2 ca-certificates cron deborphan dnsmasq firmware-atheros firmware-brcm80211 firmware-libertas firmware-linux-free firmware-misc-nonfree firmware-realtek gzip htop ifupdown init iptables iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openbsd-inetd openssh-client openssh-server p7zip-full pi-bluetooth rpi-update rsync ssh sshfs sudo systemd traceroute unace unrar-free unzip vim wget wireless-tools wpasupplicant xz-utils zip
+PACKAGES := apt bluez bluez-firmware bluez-tools bridge-utils btrfs-tools busybox-static bzip2 ca-certificates cron deborphan dnsmasq firmware-brcm80211 firmware-linux-free firmware-misc-nonfree gzip htop ifupdown init iptables iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openbsd-inetd openssh-client openssh-server pi-bluetooth rpi-update rsync ssh sshfs sudo systemd traceroute unzip vim wget wireless-tools wpasupplicant xz-utils zip
 
 # Do not change, only override in config.mk
 WIFI-SSID = 
@@ -55,6 +55,7 @@ raspi_root/: raspi_root .FORCE
 	chroot "$@" apt-get --yes --auto-remove purge
 	chroot "$@" apt-get --yes --auto-remove upgrade
 	chroot "$@" rpi-update || [ -f "$@/boot/bootcode.bin" ]
+	-[ -d "$@/boot.bak/" ] && rm -r "$@/boot.bak/"
 	sync
 	chroot "$@" apt-get clean
 	chroot "$@" rm /usr/local/sbin/invoke-rc.d
