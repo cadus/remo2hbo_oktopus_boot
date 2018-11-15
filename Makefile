@@ -73,7 +73,9 @@ files/root/.ssh/authorized_keys: id_rsa.pub
 	chmod 700 files/root/ files/root/.ssh/
 	chmod 600 '$@'
 
-raspi.img: raspi_root/ files/ partitions files/root/.ssh/authorized_keys files/etc/network/interfaces.d/wifi
+include gummikraken.mk
+
+raspi.img: raspi_root/ files/ partitions files/root/.ssh/authorized_keys files/etc/network/interfaces.d/wifi files/srv/gummikraken/
 	-rmdir "$@.mnt"
 	mkdir "$@.mnt"  # fail receipe if dir is nonempty
 	dd bs=1M count=0 seek=1024 of="$@"  # set up sparse file

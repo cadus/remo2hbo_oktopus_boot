@@ -12,3 +12,5 @@ while sleep 5; do
     bt-device --set "$mac" Trusted 1
   done
 done &
+
+/srv/gummikraken/gummikraken.sh /srv/gummikraken/gummikraken.data |ncat --send-only -kl 8200 &
