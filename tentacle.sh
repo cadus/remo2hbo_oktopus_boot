@@ -16,4 +16,4 @@ printf '%s: %s\r\n' \
   Content-Type text/plain
 printf '\r\n'
 
-ncat localhost 8200 |cut -d\  -f${field}
+ncat -U /tmp/oktopus.sock |cut -d\  -f${field}
