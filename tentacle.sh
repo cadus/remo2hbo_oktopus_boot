@@ -12,6 +12,7 @@ done
 printf 'HTTP/1.1 200 OK\r\n'
 printf '%s: %s\r\n' \
   Connection close \
+  Access-Control-Allow-Origin '*' \
   Content-Type text/plain
 printf '\r\n'
 
