@@ -4,6 +4,7 @@ raspi.img
 config.mk
 files/etc/inetd.conf
 files/srv/gummikraken/
+files/usr/local/
 files/root/.ssh/authorized_keys
 files/etc/network/interfaces.d/wifi
 id_rsa

@@ -75,11 +75,12 @@ files/root/.ssh/authorized_keys: id_rsa.pub
 	chmod 600 '$@'
 
 include gummikraken.mk
+include teesock.mk
 
-raspi.img: raspi_root/ files/ partitions files/root/.ssh/authorized_keys files/etc/network/interfaces.d/wifi files/srv/gummikraken/
+raspi.img: raspi_root/ files/ partitions files/root/.ssh/authorized_keys files/etc/network/interfaces.d/wifi files/srv/gummikraken/ files/usr/local/bin/teesock
 	-rmdir "$@.mnt"
 	mkdir "$@.mnt"  # fail receipe if dir is nonempty
-	dd bs=1M count=0 seek=1024 of="$@"  # set up sparse file
+	dd bs=1M count=0 seek=1792 of="$@"  # set up sparse file
 	sfdisk "$@" <partitions
 	lo=$$(losetup -f); image='$@'; \
 	start=$$(sfdisk --dump "$$image" |sed -rn 's;^.*start= *([0-9]+),.*type=83;\1;p'); \

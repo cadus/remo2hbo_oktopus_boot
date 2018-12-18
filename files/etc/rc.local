@@ -13,4 +13,4 @@ while sleep 5; do
   done
 done &
 
-/srv/gummikraken/gummikraken.sh /srv/gummikraken/gummikraken.data |ncat --send-only -kl 8200 &
+/srv/gummikraken/hatch.sh &
