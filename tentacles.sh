@@ -15,29 +15,9 @@ printf '%s: %s\r\n' \
 printf '\r\n'
 
 ncat -U /tmp/oktopus.sock \
-| while read ekg pulse temp oxy heart systole diastole; do
+| while read event value; do
   printf '
-event: ekg
+event: %s
 data: %i
-
-event: pulse
-data: %i
-
-event: temperature
-data: %i
-
-event: oxygen
-data: %i
-
-event: heartrate
-data: %i
-
-event: systole
-data: %i
-
-event: diastole
-data: %i
-' \
-  "$ekg" "$pulse" "$temp" "$oxy" "$heart" "$systole" "$diastole"
-  sleep .0097
+' "$event" "$value"
 done

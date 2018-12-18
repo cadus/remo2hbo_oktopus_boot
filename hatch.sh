@@ -5,9 +5,10 @@ sock=/tmp/oktopus.sock
 rm "$sock"
 
 ( cd "${0%/*}/"
-  ./gummikraken.sh ./gummikraken.data \
-  | teesock "$sock"
-) &
+  for n in ekg pulse temp oxy heart systole diastole; do
+    ./gummikraken.sh ./gummikraken.data $n &
+  done
+) | teesock "$sock" &
 
 for n in 1 2 3 4 5 6 7 8 9 0; do [ ! -S "$sock" ] && sleep 1; done
 chmod a+rw "$sock"
