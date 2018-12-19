@@ -4,13 +4,13 @@ data="$1"
 fieldname="$2"
 
 case $fieldname in
-       ekg) field=1 freq=1   ;;
-     pulse) field=2 freq=1   ;;
-      temp) field=3 freq=15  ;;
-       oxy) field=4 freq=15  ;;
-     heart) field=5 freq=20  ;;
-   systole) field=6 freq=100 ;;
-  diastole) field=7 freq=100 ;;
+      ekg*) field=0 freq=1   ;;
+    pulse*) field=1 freq=1   ;;
+     temp*) field=2 freq=15  ;;
+      oxy*) field=3 freq=15  ;;
+    heart*) field=4 freq=20  ;;
+  systole*) field=5 freq=100 ;;
+ diastole*) field=6 freq=100 ;;
          *) exit 1 ;;
 esac
 

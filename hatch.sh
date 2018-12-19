@@ -5,7 +5,7 @@ sock=/tmp/oktopus.sock
 rm "$sock"
 
 ( cd "${0%/*}/"
-  for n in ekg pulse temp oxy heart systole diastole; do
+  for n in ekg pulse temperature oxygen heartrate systole diastole; do
     ./gummikraken.sh ./gummikraken.data $n &
   done
 ) | teesock "$sock" &
