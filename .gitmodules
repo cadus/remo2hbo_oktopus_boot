@@ -1,0 +1,3 @@
+[submodule "oktopus_frontend"]
+	path = oktopus_frontend
+	url = git@git.tools.f4.htw-berlin.de:akreichgauer/oktopus_frontend.git
