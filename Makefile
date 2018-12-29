@@ -74,10 +74,11 @@ files/root/.ssh/authorized_keys: id_rsa.pub
 	chmod 700 files/root/ files/root/.ssh/
 	chmod 600 '$@'
 
-include gummikraken.mk
-include teesock.mk
+# include gummikraken.mk
+# include teesock.mk
+include *.mk
 
-raspi.img: raspi_root/ files/ partitions files/root/.ssh/authorized_keys files/etc/network/interfaces.d/wifi files/srv/gummikraken/ files/usr/local/bin/teesock
+raspi.img: raspi_root/ files/ partitions files/root/.ssh/authorized_keys files/etc/network/interfaces.d/wifi
 	-rmdir "$@.mnt"
 	mkdir "$@.mnt"  # fail receipe if dir is nonempty
 	dd bs=1M count=0 seek=1792 of="$@"  # set up sparse file

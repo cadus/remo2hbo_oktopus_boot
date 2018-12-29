@@ -4,3 +4,4 @@
 # see config.example for the Oktopus build config
 
 dtparam=audio=on
+dtoverlay=w1-gpio

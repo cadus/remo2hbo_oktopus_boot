@@ -1,5 +1,8 @@
 #!/bin/sh
 
+modprobe w1-gpio pullup=1
+modprobe w1-therm
+
 bt-network -s nap br0 &
 hciconfig hci0 up
 hciconfig hci0 sspmode 1
