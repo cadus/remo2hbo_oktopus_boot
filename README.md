@@ -55,9 +55,9 @@ As a matter of convenience during testing and debugging the sensor computer can 
 
 ### Sensor readout and Webapp
 
-    The sensor application is currently under development. The `gummikraken` submodule provides virtual sensors with simulation data. Gummikraken will be gradually replaced by working sensor drivers.
+> The sensor application is currently under development. The `gummikraken` submodule provides virtual sensors with simulation data. Gummikraken will be gradually replaced by working sensor drivers.
 
-    The display application (oktopus_frontend) is developed as a separate project. See its respective repository for a detailed documentation.
+> The display application (oktopus_frontend) is developed as a separate project. See its respective repository for a detailed documentation.
 
 Also see git submodules:
   * gummikraken (to be removed)
