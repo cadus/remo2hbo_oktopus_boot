@@ -24,7 +24,7 @@ deb	http://raspbian.raspberrypi.org/raspbian stretch main non-free firmware rpi\
 deb	http://archive.raspberrypi.org/debian stretch main\n
 endef
 
-PACKAGES := apt bluez bluez-firmware bluez-tools bridge-utils btrfs-tools busybox-static bzip2 ca-certificates cron deborphan dnsmasq firmware-brcm80211 firmware-linux-free firmware-misc-nonfree gzip htop ifupdown init iptables iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openbsd-inetd openssh-client openssh-server pi-bluetooth rpi-update rsync ssh sshfs sudo systemd traceroute unzip vim wget wireless-tools wpasupplicant xz-utils zip
+PACKAGES := apt bluez bluez-firmware bluez-tools bridge-utils btrfs-tools busybox-static bzip2 ca-certificates cron deborphan dnsmasq firmware-brcm80211 firmware-linux-free firmware-misc-nonfree gzip htop ifupdown init iptables iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openbsd-inetd openssh-client openssh-server pi-bluetooth rpi-update rsync ssh sshfs sudo systemd traceroute unzip vim wget wireless-tools wpasupplicant xz-utils zip xserver-xorg-video-fbturbo xserver-xorg nodm chromium-browser
 
 # Do not change, only override in config.mk
 WIFI-SSID = 
@@ -81,7 +81,7 @@ include *.mk
 raspi.img: raspi_root/ files/ partitions files/root/.ssh/authorized_keys files/etc/network/interfaces.d/wifi
 	-rmdir "$@.mnt"
 	mkdir "$@.mnt"  # fail receipe if dir is nonempty
-	dd bs=1M count=0 seek=1792 of="$@"  # set up sparse file
+	dd bs=1M count=0 seek=3072 of="$@"  # set up sparse file
 	sfdisk "$@" <partitions
 	lo=$$(losetup -f); image='$@'; \
 	start=$$(sfdisk --dump "$$image" |sed -rn 's;^.*start= *([0-9]+),.*type=83;\1;p'); \
@@ -95,6 +95,7 @@ raspi.img: raspi_root/ files/ partitions files/root/.ssh/authorized_keys files/e
 	losetup -o $$((start * 512)) --sizelimit $$((size * 512)) "$${lo}" "$$image" && \
 	mkfs.fat -F 32 -n boot "$$lo" && mount -t vfat "$$lo" "$@.mnt/boot";
 	cp -a "raspi_root/." "files/." "$@.mnt/"
+	-chroot "$@.mnt/" /root/postbuild.sh
 	umount "$@.mnt/boot/" "$@.mnt/"
 	losetup -a |sed -rn '/$@/{s;^([^:]+):.*$$;\1;p;q}' |xargs losetup -d
 	losetup -a |sed -rn '/$@/{s;^([^:]+):.*$$;\1;p;q}' |xargs losetup -d
