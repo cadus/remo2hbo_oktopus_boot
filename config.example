@@ -1,13 +1,28 @@
 # Name this file config.mk to override options from the main Makefile
 
-define SOURCES = 
-deb     http://raspbian.raspberrypi.org/raspbian stretch main non-free firmware rpi\n\
-deb     http://archive.raspberrypi.org/debian stretch main\n
-endef
+# define SOURCES = 
+# deb     http://raspbian.raspberrypi.org/raspbian stretch main non-free firmware rpi
+# deb     http://archive.raspberrypi.org/debian stretch main
+# endef
 
-BOOTSTRAP := http://raspbian.raspberrypi.org/raspbian
+# define WIFI_CFG =
+# auto wlan0
+# allow-hotplug wlan0
+# 
+# iface wlan0 inet dhcp
+#         wpa-ssid        "SSID"
+#         wpa-psk         "PASS"
+# endef
 
+# BOOTSTRAP := http://raspbian.raspberrypi.org/raspbian
 # PACKAGES := ${PACKAGES} foo bar ... additional packages
 
-# WIFI-SSID = 
-# WIFI-PASS =
+# include ws5inch.mk
+include teesock.mk
+include gummikraken.mk
+include frontend.mk
+
+# PHONY: rootpass
+# ${IMGFILE}: rootpass
+# rootpass: imgmount root_copy
+#	-chroot "$<" usermod -p "$$(openssl passwd -salt "x$$RANDOM" password)" root

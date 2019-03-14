@@ -20,20 +20,23 @@
 BOOTSTRAP = http://raspbian.raspberrypi.org/raspbian
 
 define SOURCES = 
-deb	http://raspbian.raspberrypi.org/raspbian stretch main non-free firmware rpi\n\
-deb	http://archive.raspberrypi.org/debian stretch main\n
+deb	http://raspbian.raspberrypi.org/raspbian stretch main non-free firmware rpi
+deb	http://archive.raspberrypi.org/debian stretch main
 endef
 
-PACKAGES := apt bluez bluez-firmware bluez-tools bridge-utils btrfs-tools busybox-static bzip2 ca-certificates cron deborphan dnsmasq firmware-brcm80211 firmware-linux-free firmware-misc-nonfree gzip htop ifupdown init iptables iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openbsd-inetd openssh-client openssh-server pi-bluetooth raspberrypi-bootloader raspberrypi-kernel rsync ssh sshfs sudo systemd traceroute unzip vim wget wireless-tools wpasupplicant xz-utils zip xserver-xorg-video-fbturbo xserver-xorg nodm chromium-browser
+PACKAGES := apt bluez bluez-firmware bluez-tools btrfs-tools busybox-static bzip2 ca-certificates cron debian-archive-keyring deborphan firmware-brcm80211 firmware-linux-free firmware-misc-nonfree gzip htop ifupdown init iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openssh-client openssh-server pi-bluetooth psmisc raspberrypi-bootloader raspberrypi-kernel rsync ssh sshfs sudo systemd traceroute unzip vim wget wireless-tools wpasupplicant xz-utils zip
+PACKAGES := ${PACKAGES} bridge-utils dnsmasq iptables make nmap openbsd-inetd xserver-xorg-video-fbturbo xserver-xorg nodm chromium-browser
 
-# Do not change, only override in config.mk
-WIFI-SSID = 
-WIFI-PASS = 
-
-include config.mk
+IMGFILE = raspi.img
 
 config.mk: config.example
 	cp -n "$<" "$@"
+include config.mk
+
+.PHONY: imgfile imgmount root_copy norecommends apt_keys wifi_cfg ssh_key busybox
+
+export SOURCES
+export WIFI_CFG
 
 raspi_root:
 	btrfs subvolume create "$@" || mkdir "$@"
@@ -44,67 +47,72 @@ raspi_root:
 		--arch=armhf --variant=minbase \
 		stretch "$@/" "${BOOTSTRAP}"
 
+norecommends: raspi_root/etc/apt/apt.conf.d/10norecommends
 raspi_root/etc/apt/apt.conf.d/10norecommends: raspi_root
 	mkdir -p "$</etc/apt/apt.conf.d/"
 	printf 'APT::Install-Recommends "false";\n' >"$@"
 	chmod 644 "$@"
 
-norecommends: raspi_root/etc/apt/apt.conf.d/10norecommends
+apt_keys: raspi_root
+	-chroot "$<" apt-key add - <./raspbian-archive-keyring.gpg
+	-chroot "$<" apt-key add - <./raspberrypi-archive-keyring.gpg
+	-chroot "$<" apt-key add - <./debian-archive-stretch-stable.gpg
 
-raspi_root/: raspi_root norecommends .FORCE
-	printf '${SOURCES}' >$@/etc/apt/sources.list
-	-chroot "$@" apt-key add - <./raspberrypi-archive-keyring.gpg
-	-chroot "$@" apt-key add - <./debian-archive-stretch-stable.gpg
+raspi_root/: raspi_root norecommends apt_keys .FORCE
+	printf %s "$$SOURCES" >$@/etc/apt/sources.list
 	-cp /etc/resolv.conf "$@etc/"
 	-chroot "$@" sh -c 'apt-mark showmanual |xargs apt-mark auto'
 	-chroot "$@" apt-get update
 	chroot "$@" ln -sf /bin/true /usr/local/sbin/invoke-rc.d
 	chroot "$@" apt-get --yes install ${PACKAGES}
 	chroot "$@" apt-get --yes --auto-remove purge
-	chroot "$@" apt-get --yes --auto-remove upgrade
-	# chroot "$@" rpi-update || [ -f "$@/boot/bootcode.bin" ]
-	# -[ -d "$@/boot.bak/" ] && rm -r "$@/boot.bak/"
-	sync
+	-chroot "$@" apt-get --yes --auto-remove upgrade
 	chroot "$@" apt-get clean
 	chroot "$@" rm /usr/local/sbin/invoke-rc.d
 	touch "$@"
 
-id_rsa.pub:
-	ssh-keygen -b 2048 -t rsa -N '' -f id_rsa
+imgfile: raspi_root/  # do not set up image file before chroot
+imgfile: partitions
+	dd bs=1M count=0 seek=1280 of="${IMGFILE}"  # set up sparse file
+	sfdisk "${IMGFILE}" <partitions
 
-files/etc/network/interfaces.d/wifi: wifi.tmpl
-	sed 's;#WIFI-SSID#;${WIFI-SSID};; s;#WIFI-PASS#;${WIFI-PASS};;' <'$<' >'$@'
-	chmod 644 '$@'
-
-files/root/.ssh/authorized_keys: id_rsa.pub
-	mkdir -p files/root/.ssh/
-	cat '$<' >>'$@'
-	chmod 700 files/root/ files/root/.ssh/
-	chmod 600 '$@'
-
-# include gummikraken.mk
-# include teesock.mk
-include *.mk
-
-raspi.img: raspi_root/ files/ partitions files/root/.ssh/authorized_keys files/etc/network/interfaces.d/wifi
-	-rmdir "$@.mnt"
-	mkdir "$@.mnt"  # fail receipe if dir is nonempty
-	dd bs=1M count=0 seek=1536 of="$@"  # set up sparse file
-	sfdisk "$@" <partitions
-	lo=$$(losetup -f); image='$@'; \
+imgmount: imgfile
+	-rmdir "$@"
+	mkdir "$@"  # fail receipe if dir is nonempty
+	lo=$$(losetup -f); image='${IMGFILE}'; \
 	start=$$(sfdisk --dump "$$image" |sed -rn 's;^.*start= *([0-9]+),.*type=83;\1;p'); \
 	size=$$(sfdisk --dump "$$image" |sed -rn 's;^.*size= *([0-9]+),.*type=83;\1;p'); \
 	losetup -o $$((start * 512)) --sizelimit $$((size * 512)) "$${lo}" "$$image" && \
-	mkfs.ext4 -F "$$lo" && mount -t ext4 "$$lo" "$@.mnt/";
-	mkdir "$@.mnt/boot"
-	lo=$$(losetup -f); image='$@'; \
+	mkfs.ext4 -F "$$lo" && mount -t ext4 "$$lo" "$@/";
+	mkdir "$@/boot"
+	lo=$$(losetup -f); image='${IMGFILE}'; \
 	start=$$(sfdisk --dump "$$image" |sed -rn 's;^.*start= *([0-9]+),.*type=c;\1;p'); \
 	size=$$(sfdisk --dump "$$image" |sed -rn 's;^.*size= *([0-9]+),.*type=c;\1;p'); \
 	losetup -o $$((start * 512)) --sizelimit $$((size * 512)) "$${lo}" "$$image" && \
-	mkfs.fat -F 32 -n boot "$$lo" && mount -t vfat "$$lo" "$@.mnt/boot";
-	cp -a "raspi_root/." "files/." "$@.mnt/"
-	-chroot "$@.mnt/" /root/postbuild.sh
-	umount "$@.mnt/boot/" "$@.mnt/"
-	losetup -a |sed -rn '/$@/{s;^([^:]+):.*$$;\1;p;q}' |xargs losetup -d
-	losetup -a |sed -rn '/$@/{s;^([^:]+):.*$$;\1;p;q}' |xargs losetup -d
-	rmdir "$@.mnt/"
+	mkfs.fat -F 32 -n boot "$$lo" && mount -t vfat "$$lo" "$@/boot";
+
+root_copy: imgmount raspi_root/ files/
+	cp -a "raspi_root/." "files/." "$</"
+
+id_rsa.pub:
+	ssh-keygen -b 2048 -t rsa -N '' -f id_rsa
+
+ssh_key: imgmount root_copy id_rsa.pub
+	mkdir -p "$</root/.ssh/"
+	cat id_rsa.pub >>"$</root/.ssh/authorized_keys"
+	chmod 700 "$</root" "$</root/.ssh"
+	chmod 600 "$</root/.ssh/authorized_keys"
+
+wifi_cfg: imgmount root_copy
+	printf '%s\n' "$$WIFI_CFG" >"$</etc/network/interfaces.d/wifi"
+	chmod 644 "$</etc/network/interfaces.d/wifi"
+
+busybox: imgmount root_copy
+	mkdir -p -m 755 "$</opt/busybox"
+	chroot "$<" busybox --install -s /opt/busybox
+
+${IMGFILE}: imgmount root_copy wifi_cfg ssh_key busybox
+	umount "$</boot/" "$</"
+	losetup -a |sed -En '/${IMGFILE}/{s;^([^:]+):.*$$;\1;p;q}' |xargs losetup -d
+	losetup -a |sed -En '/${IMGFILE}/{s;^([^:]+):.*$$;\1;p;q}' |xargs losetup -d
+	rmdir "$</"

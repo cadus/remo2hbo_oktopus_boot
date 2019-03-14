@@ -1,8 +1,11 @@
-files/srv/gummikraken/: gummikraken/ sensors/ .FORCE
-	mkdir -p "$@"
-	cp -av "$</." sensors/. "$@/."
-	chmod a+rX -R "$@"
-	cp gummikraken/inetd.conf files/etc/inetd.conf
-	sed -ri 's;http://[0-9\.]+:8200;http://oktopus:8200;g' "$@/oktopus_frontend/dist/bundle.js"
+gummikraken_inetd := 8200	stream	tcp	nowait	nobody	/srv/gummikraken/tentacles.sh	webtopus
+export gummikraken_inetd
 
-raspi.img: files/srv/gummikraken/
+.PHONY: gummikraken
+
+${IMGFILE}: gummikraken
+gummikraken: imgmount root_copy gummikraken/ sensors/
+	mkdir -p "$</srv/gummikraken"
+	cp -av gummikraken/. sensors/. "$</srv/gummikraken/"
+	chmod a+rX -R "$</srv/gummikraken/"
+	printf '%s\n' "$$gummikraken_inetd" >>"$</etc/inetd.conf"
