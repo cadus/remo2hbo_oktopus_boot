@@ -1,7 +1,10 @@
 # This is the config.txt file for the raspberry pi /boot partition
 # It contains options for hardware initialization during the raspberry boot
-# This is _not_ the configuration file for the Oktopus system builder
-# see config.example for the Oktopus build config
 
 dtparam=audio=on
 dtoverlay=w1-gpio
+
+hdmi_group=2
+hdmi_mode=87
+hdmi_cvt=800 480 60 6 0 0 0
+hdmi_drive=1
