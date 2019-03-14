@@ -24,7 +24,7 @@ deb	http://raspbian.raspberrypi.org/raspbian stretch main non-free firmware rpi\
 deb	http://archive.raspberrypi.org/debian stretch main\n
 endef
 
-PACKAGES := apt bluez bluez-firmware bluez-tools bridge-utils btrfs-tools busybox-static bzip2 ca-certificates cron deborphan dnsmasq firmware-brcm80211 firmware-linux-free firmware-misc-nonfree gzip htop ifupdown init iptables iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openbsd-inetd openssh-client openssh-server pi-bluetooth rpi-update rsync ssh sshfs sudo systemd traceroute unzip vim wget wireless-tools wpasupplicant xz-utils zip xserver-xorg-video-fbturbo xserver-xorg nodm chromium-browser
+PACKAGES := apt bluez bluez-firmware bluez-tools bridge-utils btrfs-tools busybox-static bzip2 ca-certificates cron deborphan dnsmasq firmware-brcm80211 firmware-linux-free firmware-misc-nonfree gzip htop ifupdown init iptables iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openbsd-inetd openssh-client openssh-server pi-bluetooth raspberrypi-bootloader raspberrypi-kernel rsync ssh sshfs sudo systemd traceroute unzip vim wget wireless-tools wpasupplicant xz-utils zip xserver-xorg-video-fbturbo xserver-xorg nodm chromium-browser
 
 # Do not change, only override in config.mk
 WIFI-SSID = 
@@ -44,9 +44,17 @@ raspi_root:
 		--arch=armhf --variant=minbase \
 		stretch "$@/" "${BOOTSTRAP}"
 
-raspi_root/: raspi_root .FORCE
+raspi_root/etc/apt/apt.conf.d/10norecommends: raspi_root
+	mkdir -p "$</etc/apt/apt.conf.d/"
+	printf 'APT::Install-Recommends "false";\n' >"$@"
+	chmod 644 "$@"
+
+norecommends: raspi_root/etc/apt/apt.conf.d/10norecommends
+
+raspi_root/: raspi_root norecommends .FORCE
 	printf '${SOURCES}' >$@/etc/apt/sources.list
 	-chroot "$@" apt-key add - <./raspberrypi-archive-keyring.gpg
+	-chroot "$@" apt-key add - <./debian-archive-stretch-stable.gpg
 	-cp /etc/resolv.conf "$@etc/"
 	-chroot "$@" sh -c 'apt-mark showmanual |xargs apt-mark auto'
 	-chroot "$@" apt-get update
@@ -54,8 +62,8 @@ raspi_root/: raspi_root .FORCE
 	chroot "$@" apt-get --yes install ${PACKAGES}
 	chroot "$@" apt-get --yes --auto-remove purge
 	chroot "$@" apt-get --yes --auto-remove upgrade
-	chroot "$@" rpi-update || [ -f "$@/boot/bootcode.bin" ]
-	-[ -d "$@/boot.bak/" ] && rm -r "$@/boot.bak/"
+	# chroot "$@" rpi-update || [ -f "$@/boot/bootcode.bin" ]
+	# -[ -d "$@/boot.bak/" ] && rm -r "$@/boot.bak/"
 	sync
 	chroot "$@" apt-get clean
 	chroot "$@" rm /usr/local/sbin/invoke-rc.d
@@ -81,7 +89,7 @@ include *.mk
 raspi.img: raspi_root/ files/ partitions files/root/.ssh/authorized_keys files/etc/network/interfaces.d/wifi
 	-rmdir "$@.mnt"
 	mkdir "$@.mnt"  # fail receipe if dir is nonempty
-	dd bs=1M count=0 seek=3072 of="$@"  # set up sparse file
+	dd bs=1M count=0 seek=1536 of="$@"  # set up sparse file
 	sfdisk "$@" <partitions
 	lo=$$(losetup -f); image='$@'; \
 	start=$$(sfdisk --dump "$$image" |sed -rn 's;^.*start= *([0-9]+),.*type=83;\1;p'); \
