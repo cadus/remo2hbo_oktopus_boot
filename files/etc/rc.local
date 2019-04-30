@@ -3,6 +3,7 @@
 modprobe w1-gpio pullup=1
 modprobe w1-therm
 
+while ! hciconfig hci0; do sleep 1; done
 bt-network -s nap br0 &
 hciconfig hci0 up
 hciconfig hci0 sspmode 1
