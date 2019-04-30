@@ -24,6 +24,8 @@ deb	http://raspbian.raspberrypi.org/raspbian stretch main non-free firmware rpi
 deb	http://archive.raspberrypi.org/debian stretch main
 endef
 
+APTKEYS = ./raspbian-archive-keyring.gpg ./raspberrypi-archive-keyring.gpg ./debian-archive-stretch-stable.gpg
+
 PACKAGES := apt bluez bluez-firmware bluez-tools btrfs-tools busybox-static bzip2 ca-certificates cron debian-archive-keyring deborphan firmware-brcm80211 firmware-linux-free firmware-misc-nonfree gzip htop ifupdown init iputils-ping irqbalance isc-dhcp-client less libraspberrypi-bin libraspberrypi0 make net-tools nmap ntpdate openssh-client openssh-server pi-bluetooth psmisc raspberrypi-bootloader raspberrypi-kernel rsync ssh sshfs sudo systemd traceroute unzip vim wget wireless-tools wpasupplicant xz-utils zip
 PACKAGES := ${PACKAGES} bridge-utils dnsmasq iptables make nmap openbsd-inetd xserver-xorg-video-fbturbo xserver-xorg nodm chromium-browser
 
@@ -56,9 +58,7 @@ raspi_root/etc/apt/apt.conf.d/10norecommends: raspi_root
 	chmod 644 "$@"
 
 apt_keys: raspi_root
-	-chroot "$<" apt-key add - <./raspbian-archive-keyring.gpg
-	-chroot "$<" apt-key add - <./raspberrypi-archive-keyring.gpg
-	-chroot "$<" apt-key add - <./debian-archive-stretch-stable.gpg
+	cp ${APTKEYS} "$</etc/apt/trusted.gpg.d/"
 
 raspi_root/: raspi_root norecommends apt_keys .FORCE
 	printf %s "$$SOURCES" >$@/etc/apt/sources.list
