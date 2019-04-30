@@ -1,0 +1,43 @@
+{
+  "name": "oktopus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --config ./webpack.config.js --mode development",
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://git.tools.f4.htw-berlin.de/akreichgauer/oktopus_frontend.git"
+  },
+  "author": "Andrea Kreichgauer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://git.tools.f4.htw-berlin.de/akreichgauer/oktopus_frontend.git/issues"
+  },
+  "homepage": "https://git.tools.f4.htw-berlin.de/akreichgauer/oktopus_frontend.git#readme",
+  "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.4",
+    "css-loader": "^1.0.1",
+    "file-loader": "^2.0.0",
+    "style-loader": "^0.23.1",
+    "svg-inline-loader": "^0.8.0",
+    "url-loader": "^1.1.2",
+    "webpack": "^4.26.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
+  },
+  "dependencies": {
+    "dygraphs": "^2.1.0",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-timeseries-charts": "^0.15.5"
+  }
+}

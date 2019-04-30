@@ -1,0 +1,152 @@
+* {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+
+.html {
+  min-height: 100%;
+  max-height: 100%;
+  min-width: 100%;
+  max-width: 100%;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  min-height: 96%;
+  max-height: 96%;
+  min-width: 98%;
+  max-width: 98%;
+  margin:auto;
+  overflow: hidden;
+}
+
+#footer {
+  border-style: dashed none none none;
+  flex: 1;
+  text-align: right;
+  font-size: 2vmin;
+}
+
+#header {
+  border-style: none none dashed none;
+  flex: 6;
+  font-family: 'Bungee', sans-serif;
+  font-size: 3vmin;
+  min-height: 6vh;
+  max-height: 6vh;
+  display:inline-block;
+  vertical-align: baseline; 
+}
+
+.iconBar {
+  float: right;
+}
+
+.header-icons {
+padding: 3px;
+max-width: 5vw;
+max-height: 5vh;
+}
+
+#grid-container {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: repeat(12, 5vh);
+    grid-gap: 2vmin;
+    padding: 4vmin;
+    flex: 10;
+  }
+
+  #grid-container > div {
+    border: 1px solid black;
+    min-width: 100%;
+    padding: 1vmin;
+    }
+
+  .biosignal-EKG {
+    grid-column: 1 / 2;
+    grid-row: 1 / 5; 
+  }
+
+  .biosignal-HR-Graph {
+    grid-column: 1 / 2;
+    grid-row: 5 / 9; 
+    
+  }
+
+  .biosignal-placeholder-Graph {
+    grid-column: 1 / 2;
+    grid-row: 9 / 13; 
+  }
+
+  .biosignal-placeholder-Graph > div, .biosignal-HR-Graph > div, .biosignal-EKG > div {
+    max-height: 22vh;
+    min-height: 22vh;
+    min-width:63vw;
+    max-width:63vw;
+  }
+
+  .biosignal-Temp {
+    grid-column: 2 / 3;
+    grid-row: 1 / 4; 
+    color: red;
+  }
+
+  .biosignal-HR {
+    grid-column: 2 / 3;
+    grid-row: 4 / 7; 
+    color: greenyellow;
+  }
+
+  .biosignal-sO2 {
+    grid-column: 2 / 3;
+    grid-row: 7 / 10; 
+    color: cyan;
+  }
+
+  .biosignal-RR {
+    grid-column: 2 / 3;
+    grid-row: 10 / 13; 
+    color: orange;
+  }
+
+  .bioSignalType {
+    text-align: start;
+    font-weight: bold;
+    font-size: 2vmin;
+  }
+
+  .bioSignalValue {
+    text-align: center;
+    font-weight: bold;
+    font-size: 4vmin;
+    overflow: hidden;
+  }
+
+  .none {
+    display: none;
+  }
+
+  .block {
+    background-color:grey;
+    opacity: 0.3;
+    min-height: 75%;
+    max-height: 80%;
+    min-width: 30%;
+    max-width: 40%;
+    margin-left:50%;
+    float: right;
+    display: block;
+    position: absolute;
+  }
+
+  .dygraph-label.dygraph-title {
+    color: blue;
+    float: left;
+    font-weight: bold;
+    font-size: 2vmin;
+  }
