@@ -25,4 +25,4 @@ include frontend.mk
 # PHONY: rootpass
 # ${IMGFILE}: rootpass
 # rootpass: imgmount root_copy
-#	-chroot "$<" usermod -p "$$(openssl passwd -salt "x$$RANDOM" password)" root
+#	chroot "$<" usermod -p "$$(openssl passwd -salt "$${RANDOM}xx" password)" root
