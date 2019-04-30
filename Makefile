@@ -29,6 +29,8 @@ PACKAGES := ${PACKAGES} bridge-utils dnsmasq iptables make nmap openbsd-inetd xs
 
 IMGFILE = raspi.img
 
+${IMGFILE}:
+
 config.mk: config.example
 	cp -n "$<" "$@"
 include config.mk
