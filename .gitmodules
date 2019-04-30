@@ -1,9 +1,6 @@
 [submodule "gummikraken"]
 	path = gummikraken
 	url = https://git.tools.f4.htw-berlin.de/phaensch/gummikraken.git
-[submodule "teesock"]
-	path = teesock
-	url = https://git.tools.f4.htw-berlin.de/phaensch/teesock.git
 [submodule "oktopus_frontend"]
 	path = oktopus_frontend
 	url = https://git.tools.f4.htw-berlin.de/akreichgauer/oktopus_frontend.git
