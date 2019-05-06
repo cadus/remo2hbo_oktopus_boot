@@ -58,6 +58,7 @@ raspi_root/etc/apt/apt.conf.d/10norecommends: raspi_root
 	chmod 644 "$@"
 
 apt_keys: raspi_root
+	mkdir -p "$</etc/apt/trusted.gpg.d/"
 	cp ${APTKEYS} "$</etc/apt/trusted.gpg.d/"
 
 raspi_root/: raspi_root norecommends apt_keys .FORCE
